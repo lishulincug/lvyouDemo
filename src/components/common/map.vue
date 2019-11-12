@@ -30,10 +30,44 @@ export default {
 				infoBox: false,
 				scene3DOnly: true,
 				selectionIndicator: false,
-				imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
-					url: "https://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer"
-				})
+        imageryProvider:new Cesium.UrlTemplateImageryProvider({
+          url: 'http://mt1.google.cn/vt/lyrs=s&hl=zh-CN&x={x}&y={y}&z={z}&s=Gali',
+          // channel : 1008
+        }),
+        // imageryProvider: new Cesium.BingMapsImageryProvider({
+        //   url: "https://dev.virtualearth.net",
+        //   mapStyle:Cesium.BingMapsStyle.AERIAL//AERIAL_WITH_LABELS
+        // }),
+        // imageryProvider: new Cesium.createOpenStreetMapImageryProvider({
+        //   url: "https://a.tile.openstreetmap.org/",
+        // }),
+				// imageryProvider: new Cesium.ArcGisMapServerImageryProvider({
+				// 	url: "https://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer"
+				// })
+        // terrainProvider : new Cesium.CesiumTerrainProvider({
+        //   url : 'https://assets.agi.com/stk-terrain/v1/tilesets/world/tiles',
+        // })
 			});
+    // var worldTerrain = new Cesium.CesiumTerrainProvider({
+    //   url : Cesium.IonResource.fromAssetId(3956),
+    //   requestVertexNormals : true
+    // });
+    // viewer.terrainProvider = worldTerrain;
+    // var terrainProvider = new Cesium.CesiumTerrainProvider({
+    //   url :'https://www.supermapol.com/realspace/services/3D-stk_terrain/rest/realspace/datas/info/data/path',
+    //   requestWaterMask : true,
+    //   requestVertexNormals : true
+    // });
+    // viewer.terrainProvider = terrainProvider;
+    var layers = viewer.scene.imageryLayers;
+    // var blackMarble = layers.addImageryProvider(new Cesium.createOpenStreetMapImageryProvider({
+    //   url : 'https://a.tile.openstreetmap.org/'
+    // }));
+    var blackMarble = layers.addImageryProvider(new Cesium.UrlTemplateImageryProvider({
+      url: "http://webrd02.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+    }));
+
+    blackMarble.alpha = 0.3; // 0.0  全透明.  1.0 不透明.
 		this.viewer = viewer
 		this.viewer._cesiumWidget._creditContainer.style.display="none"; //隐藏版权信息
 		this.$store.commit('viewerFun', viewer)
@@ -57,7 +91,7 @@ export default {
 			// this.getPath();
 			// console.log(window.location.hash,46)
 			// 		// this.clearMap()
-			
+
 			// switch (window.location.hash) {
 			// 	case '#/map/cyjc':
 			// 		// this.clickFun()
@@ -66,7 +100,7 @@ export default {
 			// 		// this.clickFun2()
 
 			// 		break;
-				
+
 			// 	default:
 			// 		break;
 			// }
@@ -79,11 +113,11 @@ export default {
 				let data = res.data
 				this.addPointFun(data)
 				// if(flag == 1){
-					
+
 				// }else if(flag == 2){
 				// 	this.addPointFun2(data)
 				// }
-				
+
 			})
 		},
 		clickFun2(){
@@ -100,11 +134,11 @@ export default {
 					'./static/img/lyzy/mapIcon/jk1.png'
 				])
 				// if(flag == 1){
-					
+
 				// }else if(flag == 2){
 				// 	this.addPointFun2(data)
 				// }
-				
+
 			})
 		},
 		//清除所有图层
@@ -167,10 +201,10 @@ export default {
 					pixelOffset: new Cesium.Cartesian2(0.0, -image.height + 17),
 					scale: 1,
 					sizeInMeters: true
-				}	
+				}
 			});
 		},
-		//打点方法一   
+		//打点方法一
 		addPointFun(data) {
 			var str = "";
 			var xiangmubiaohao;
@@ -210,7 +244,7 @@ export default {
 				text = "";
 				if (str != "") {
 					jnData = str.split(/[\n,]/g);
-					jnTran = this.tranCoor(parseFloat(jnData[0]), parseFloat(jnData[1])); 
+					jnTran = this.tranCoor(parseFloat(jnData[0]), parseFloat(jnData[1]));
 					imgurl = imgarr[obj.type];
 					this.offsetByDistance(jnTran, xiangmubiaohao, text, imgurl);
 				}
@@ -219,7 +253,7 @@ export default {
 		//第一次进入
 		firstEnter(){
 			let jnTran2 = this.tranCoor(106.57958,29.091797)
-			
+
 			this.viewer.camera.flyTo({
 				destination: Cesium.Cartesian3.fromDegrees(jnTran2[0], jnTran2[1], 100000),
 				orientation: {
